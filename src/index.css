@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+    section{
+        @apply py-[75px]
+    }
+}
+
+@layer components{
+    .heading{
+        @apply text-[44px] leading-[54px] font-[700] 
+    }
+
+    .btn {
+        @apply bg-primaryColor py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px]
+    }
+}
