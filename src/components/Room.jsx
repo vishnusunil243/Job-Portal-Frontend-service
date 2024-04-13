@@ -8,7 +8,12 @@ const Room = () => {
   const peerRef = useRef();
   const webSocketRef = useRef();
   const navigate=useNavigate();
+  const [audioEnabled,setAudioEnabled]=useState(true);
   const [joinRequest,setJoinRequest]=useState(false);
+  const [screenShareActive, setScreenShareActive] = useState(false);
+  const [videoEnabled,setVideoEnabled]=useState(true);
+ 
+
 
   const { roomid } = useParams();
 
@@ -22,6 +27,7 @@ const Room = () => {
         deviceId: cameras[0].deviceId,
       },
     };
+   
 
     try {
       return await navigator.mediaDevices.getUserMedia(constraints);
@@ -33,6 +39,7 @@ const Room = () => {
 
   useEffect(() => {
     openCamera().then((stream) => {
+      console.log(stream.getAudioTracks())
       userVideo.current.srcObject = stream;
       userStream.current = stream;
 
@@ -50,7 +57,7 @@ const Room = () => {
         if (message.joinRequest){
           setJoinRequest(true);
         }
-        if (message.join && !joinRequest) {
+        if (message.join) {
           callUser();
         }
 
@@ -75,7 +82,7 @@ const Room = () => {
         }
       });
     });
-  });
+  },[]);
 
   const handleOffer = async (offer) => {
     console.log("Received Offer, Creating Answer");
@@ -141,7 +148,50 @@ const Room = () => {
     userVideo.current.srcObject=null;
     navigate('/')
   }
-
+  const toggleAudio = () => {
+    const tracks = userStream.current.getTracks().filter((track) => track.kind === 'audio');
+    tracks.forEach((track) => (track.enabled = !audioEnabled));
+    setAudioEnabled(!audioEnabled);
+  };
+  const toggleVideo=()=>{
+    const tracks=userStream.current.getTracks().filter((track)=>track.kind==='video');
+    tracks.forEach((track)=>(track.enabled=!videoEnabled));
+    setVideoEnabled(!videoEnabled);
+  }
+  const toggleScreenShare = () => {
+    if (!screenShareActive) {
+      navigator.mediaDevices
+        .getDisplayMedia({ video: true, audio: true })
+        .then((stream) => {
+          setScreenShareActive(true);
+          const videoTrack = stream.getVideoTracks()[0];
+          const sender = peerRef.current.getSenders().find((s) => s.track.kind === "video");
+          if (sender) {
+            sender.replaceTrack(videoTrack);
+          } else {
+            console.error("No video sender found");
+          }
+          userStream.current = stream;
+          userVideo.current.srcObject = stream;
+        })
+        .catch((err) => {
+          console.error("Error sharing screen:", err);
+        });
+    } else {
+      setScreenShareActive(false);
+      openCamera().then((stream) => {
+        const videoTrack = stream.getVideoTracks()[0];
+        const sender = peerRef.current.getSenders().find((s) => s.track.kind === "video");
+        if (sender) {
+          sender.replaceTrack(videoTrack);
+        } else {
+          console.error("No video sender found");
+        }
+        userStream.current = stream;
+        userVideo.current.srcObject = stream;
+      });
+    }
+  };
   const handleTrackEvent = (e) => {
     console.log("Received Tracks");
     partnerVideo.current.srcObject = e.streams[0];
@@ -184,14 +234,17 @@ const Room = () => {
 </div>
     <div>
       <section>
-        <div className="bg-black p-10 m-[100px]">
+        <div className="bg-black p-10 m-[75px]">
           <div className="flex justify-center items-center gap-5 mt-5">
-            <video className="w-full mt-3 rounded-lg" autoPlay ref={userVideo}></video>
-            <video className="w-full mt-3 rounded-lg" autoPlay ref={partnerVideo}></video>
+            <video  className="w-full mt-3 rounded-lg" autoPlay style={{ maxWidth: '65%', maxHeight: '65%' }} ref={userVideo}></video>
+            <video className="w-full mt-3 rounded-lg" autoPlay style={{ maxWidth: '65%', maxHeight: '65%' }} ref={partnerVideo}></video>
           </div>
           <div className="flex justify-center items-center gap-5">
           <button className="btn" onClick={leaveCall}>Leave</button>
-            <button className="btn">Mute</button>
+          <button className="btn" onClick={toggleAudio}>{audioEnabled ? "Mute" : "Unmute"}</button>
+<button className="btn" onClick={toggleScreenShare}>{screenShareActive ? "Stop Sharing" : "Screen Share"}</button>
+<button className="btn" onClick={toggleVideo}>{videoEnabled ? "Mute Video" : "Unmute Video"}</button>
+
           </div>
         </div>
       </section>

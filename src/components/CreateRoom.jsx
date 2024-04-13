@@ -6,7 +6,7 @@ const CreateRoom = () => {
   const [roomId, setRoomId] = useState('');
   const create=async(e)=>{
     e.preventDefault();
-    const resp=await fetch("http://localhost:8000/create");
+    const resp=await fetch("http://localhost:8080/call/create");
     const {room_id}=await resp.json();
     navigate(`/room/${room_id}`)
 }
