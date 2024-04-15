@@ -44,7 +44,7 @@ const Room = () => {
       userStream.current = stream;
 
       webSocketRef.current = new WebSocket(
-        `ws://localhost:8000/join?roomId=${roomid}`
+        `ws://interviewchat-service:8000/join?roomId=${roomid}`
       );
 
       webSocketRef.current.addEventListener("open", () => {
