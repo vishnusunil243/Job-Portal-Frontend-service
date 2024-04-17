@@ -7,5 +7,6 @@ FROM node:16-alpine
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY . .
+RUN npm run build
 EXPOSE 5173
 CMD ["npm", "run", "dev"]
