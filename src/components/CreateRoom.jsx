@@ -6,7 +6,7 @@ const CreateRoom = () => {
   const [roomId, setRoomId] = useState('');
   const create=async(e)=>{
     e.preventDefault();
-    const resp=await fetch("http://pcforu.online/create");
+    const resp=await fetch("https://pcforu.online/create");
     const {room_id}=await resp.json();
     navigate(`/room/${room_id}`)
 }
