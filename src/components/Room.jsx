@@ -161,7 +161,7 @@ const Room = () => {
   const toggleScreenShare = () => {
     if (!screenShareActive) {
       navigator.mediaDevices
-        .getDisplayMedia({ video: true, audio: true })
+        .getDisplayMedia({ video: true, audio: false })
         .then((stream) => {
           setScreenShareActive(true);
           const videoTrack = stream.getVideoTracks()[0];
