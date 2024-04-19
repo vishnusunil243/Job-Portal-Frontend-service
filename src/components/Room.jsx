@@ -234,7 +234,7 @@ const Room = () => {
 </div>
     <div>
       <section>
-        <div className="bg-black p-10 m-[75px]">
+        <div className="bg-black p-5 m-[45px]">
           <div className="flex lg:flex-row flex-col justify-center items-center gap-5 mt-5">
             <video  className="w-full mt-3 rounded-lg" autoPlay style={{ maxWidth: '65%', maxHeight: '65%' }} ref={userVideo}></video>
             <video className="w-full mt-3 rounded-lg" autoPlay style={{ maxWidth: '65%', maxHeight: '65%' }} ref={partnerVideo}></video>
