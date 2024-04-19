@@ -44,7 +44,7 @@ const Room = () => {
       userStream.current = stream;
 
       webSocketRef.current = new WebSocket(
-        `https://pcforu.online/join?roomId=${roomid}`
+        `wss://pcforu.online/join?roomId=${roomid}`
       );
 
       webSocketRef.current.addEventListener("open", () => {
