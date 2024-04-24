@@ -194,7 +194,14 @@ const Room = () => {
   };
   const handleTrackEvent = (e) => {
     console.log("Received Tracks");
-    partnerVideo.current.srcObject = e.streams[0];
+    // partnerVideo.current.srcObject = e.streams[0];
+    e.streams[0].getTracks().forEach((track) => {
+      if (track.kind === "audio") {
+        partnerVideo.current.srcObject.addTrack(track);
+      } else if (track.kind === "video") {
+        partnerVideo.current.srcObject = e.streams[0];
+      }
+    });
   };
 
 ;
