@@ -197,7 +197,11 @@ const Room = () => {
     // partnerVideo.current.srcObject = e.streams[0];
     e.streams[0].getTracks().forEach((track) => {
       if (track.kind === "audio") {
-        partnerVideo.current.srcObject.addTrack(track);
+        if (partnerVideo.current.srcObject) {
+          partnerVideo.current.srcObject.addTrack(track);
+        } else {
+          partnerVideo.current.srcObject = new MediaStream([track]);
+        }
       } else if (track.kind === "video") {
         partnerVideo.current.srcObject = e.streams[0];
       }
